@@ -395,38 +395,30 @@ class MetaWeblog {
 	 * @param	ARRAY	$struct		A post stuct
 	 * @return	INT					Assigned post ID
 	 */
-	public function newMediaObject($name, $file, $overwrite=false) {
+	public function newMediaObject($name, $mimetype, $content, $overwrite=false) {
 
-		comodojo_load_resource('filesystem');
+		if ( empty($name) OR empty($mimetype) OR empty($content) ) throw new Exception('Invalid media object');
 
-		if ( $empty($name) OR $empty($file) ) {
-			throw new Exception('Invalid file reference',3203);
-		}
+		$params = array(
+			$this->id,
+			$this->user,
+			$this->pass,
+			array(
+				"name" 		=> $name,
+				"type" 		=> $mimetype,
+				"bits" 		=> sizeof($content),
+				"overwrite" => filter_var($overwrite, FILTER_VALIDATE_BOOLEAN)
+			)
+		);
 
 		try {
 			
-			$fs = new filesystem();
-			$info = $fs->getInfo($file);
-			$mime = $info["mimetype"]:
-			$bits = $fs->readFile($file, true);
-
-			$params = Array(
-				$this->weblogId,
-				$this->weblogUserName,
-				$this->weblogUserPass,
-				Array(
-					"name" => $name,
-					"type" => $mime,
-					"bits" => $bits,
-					"overwrite" => filter_var($overwrite, FILTER_VALIDATE_BOOLEAN)
-				)
-			);
-
-			$handler = new rpc_client($this->weblogAddress, 'XML', NULL, $this->weblogPort);
-			$response = $handler->send('metaWeblog.newMediaObject', $params, false);
+			$response = $this->sendRpcRequest('metaWeblog.newMediaObject', $params);
 
 		} catch (Exception $e) {
+
 			throw $e;
+			
 		}
 
 		return $response;
