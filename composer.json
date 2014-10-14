@@ -1,6 +1,6 @@
 {
     "name": "comodojo/metaweblog",
-    "description": "Yet another php xmlrpc decoder/encoder",
+    "description": "A legacy metaweblog-compliant rpc interface",
     "license": "GPL-3.0+",
     "type": "library",
     "keywords": [
@@ -27,6 +27,6 @@
     },
     "minimum-stability": "dev",
     "require": {
-        "php": ">=5.1.3"
+        "php": ">=5.0.0"
     }
 }
