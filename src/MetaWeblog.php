@@ -271,8 +271,8 @@ class MetaWeblog {
             'description'       =>  self::sanitizeText($struct['description'], $this->encoding),
             'post_type'         =>  isset($struct['post_type']) ? $struct['post_type'] : "post",
             'mt_text_more'      =>  isset($struct['mt_text_more']) ? self::sanitizeText($struct['mt_text_more'], $this->encoding) : false,
-            'categories'        =>  isset($struct['categories']) AND is_array($struct['categories']) ? array_map( function($value) { return self::sanitizeText($value, $this->encoding); }, $struct['categories'] ) : array(),
-            'mt_keywords'       =>  isset($struct['mt_keywords']) AND is_array($struct['mt_keywords']) ? array_map( function($value) { return self::sanitizeText($value, $this->encoding); }, $struct['mt_keywords'] ) : array(),
+            'categories'        =>  ( isset($struct['categories']) AND is_array($struct['categories']) ) ? self::sanitizeText($struct['categories'], $this->encoding) : array(),
+            'mt_keywords'       =>  ( isset($struct['mt_keywords']) AND is_array($struct['mt_keywords']) ) ? aself::sanitizeText($struct['mt_keywords'], $this->encoding) : array(),
             'mt_excerpt'        =>  isset($struct['mt_excerpt']) ? self::sanitizeText($struct['mt_excerpt'], $this->encoding) : false,
             'mt_text_more'      =>  isset($struct['mt_text_more']) ? self::sanitizeText($struct['mt_text_more'], $this->encoding) : false,
             'mt_allow_comments' =>  isset($struct['mt_allow_comments']) ? $struct['mt_allow_comments'] : "open",
@@ -336,8 +336,8 @@ class MetaWeblog {
             'description'       =>  self::sanitizeText($struct['description'], $this->encoding),
             'post_type'         =>  isset($struct['post_type']) ? $struct['post_type'] : "post",
             'mt_text_more'      =>  isset($struct['mt_text_more']) ? self::sanitizeText($struct['mt_text_more'], $this->encoding) : false,
-            'categories'        =>  isset($struct['categories']) AND is_array($struct['categories']) ? array_map( function($value) { return self::sanitizeText($value, $this->encoding); }, $struct['categories'] ) : array(),
-            'mt_keywords'       =>  isset($struct['mt_keywords']) AND is_array($struct['mt_keywords']) ? array_map( function($value) { return self::sanitizeText($value, $this->encoding); }, $struct['mt_keywords'] ) : array(),
+            'categories'        =>  ( isset($struct['categories']) AND is_array($struct['categories']) ) ? self::sanitizeText($struct['categories'], $this->encoding) : array(),
+            'mt_keywords'       =>  ( isset($struct['mt_keywords']) AND is_array($struct['mt_keywords']) ) ? aself::sanitizeText($struct['mt_keywords'], $this->encoding) : array(),
             'mt_excerpt'        =>  isset($struct['mt_excerpt']) ? self::sanitizeText($struct['mt_excerpt'], $this->encoding) : false,
             'mt_text_more'      =>  isset($struct['mt_text_more']) ? self::sanitizeText($struct['mt_text_more'], $this->encoding) : false,
             'mt_allow_comments' =>  isset($struct['mt_allow_comments']) ? $struct['mt_allow_comments'] : "open",
@@ -649,9 +649,19 @@ class MetaWeblog {
 
     }
 
-    static private function sanitizeText($text, $encoding) {
+    static private function sanitizeText($mixed, $encoding) {
 
-        return htmlentities( iconv( mb_detect_encoding($text, mb_detect_order(), false), $encoding, $text) );
+        if ( is_array($mixed) ) {
+           
+           foreach ( $mixed as $id => $val ) $mixed[$id] = self::sanitizeText($val, $encoding);
+           
+        } else {
+
+           $mixed = htmlentities( iconv( mb_detect_encoding($mixed, mb_detect_order(), false), $encoding, $mixed) );
+
+        }
+
+        return $mixed;
 
     }
 
