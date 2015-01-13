@@ -54,13 +54,6 @@ class MetaWeblog {
     private $pass = null;
 
     /**
-     * XmlRpc server port
-     * 
-     * @param   string
-     */
-    private $port = 80;
-
-    /**
      * Weblog ID (leave it 0 if you're in single-blog mode)
      * 
      * @param   string
@@ -79,11 +72,15 @@ class MetaWeblog {
     /**
      * Class constructor
      * 
-     * @param   STRING  $weblogAddress
-     * @param   STRING  $weblogUserName
-     * @param   STRING  $weblogUserName
+     * @param   string  $address  RPC server full address
+     * @param   string  $user     (optional) Username
+     * @param   string  $pass     (optional) Password
+     * 
+     * @throws \Comodojo\Exception\MetaWeblogException
+     * @throws \Comodojo\Exception\HttpException;
+     * @throws \Exception;
      */
-    public function __construct($address, $user, $pass) {
+    public function __construct($address, $user=false, $pass=false) {
         
         if ( empty($address) ) throw new MetaWeblogException("Invalid remote xmlrpc server");
 
@@ -97,6 +94,10 @@ class MetaWeblog {
             
             $this->rpc_client = new RpcClient($address);
 
+        } catch (HttpException $he) {
+            
+            throw $he;
+
         } catch (Exception $e) {
             
             throw $e;
@@ -105,21 +106,13 @@ class MetaWeblog {
 
     }
 
-    final public function setPort($port) {
-
-        $this->port = filter_var($port, FILTER_VALIDATE_INT, array(
-            "options" => array(
-                "min_range" => 1,
-                "max_range" => 65535,
-                "default" => 80
-                )
-            )
-        );
-
-        return $this;
-
-    }
-
+    /**
+     * Set the blog id
+     *
+     * @param   int     $id    Blog ID
+     * 
+     * @return  Object  $this
+     */
     final public function setId($id) {
 
         $this->id = filter_var($id, FILTER_VALIDATE_INT, array(
@@ -133,6 +126,13 @@ class MetaWeblog {
 
     }
 
+    /**
+     * Set encoding
+     *
+     * @param   string  $encoding
+     * 
+     * @return  Object  $this
+     */
     final public function setEncoding($encoding) {
 
         $this->encoding = $encoding;
@@ -141,21 +141,36 @@ class MetaWeblog {
 
     }
 
-    final public function getPort() {
-
-        return $this->port;
-
-    }
-
+    /**
+     * Get blog id
+     * 
+     * @return  int
+     */
     final public function getId() {
 
         return $this->id;
 
     }
 
+    /**
+     * Get current encoding
+     * 
+     * @return  string
+     */
     final public function getEncoding() {
 
         return $this->encoding;
+
+    }
+    
+    /**
+     * Get the RPC client object
+     *
+     * @return  \Comodojo\RpcClient\RpcClient
+     */
+    final public function getRpcClient() {
+
+        return $this->rpc_client;
 
     }
 
@@ -163,7 +178,14 @@ class MetaWeblog {
      * Retrieve a post from weblog
      * 
      * @param   int     $id     Post's ID
+     * 
      * @return  array
+     * 
+     * @throws \Comodojo\Exception\MetaWeblogException
+     * @throws \Comodojo\Exception\RpcException
+     * @throws \Comodojo\Exception\HttpException
+     * @throws \Comodojo\Exception\XmlrpcException
+     * @throws \Exception
      */
     public function getPost($id) {
 
@@ -207,6 +229,11 @@ class MetaWeblog {
      * @param   int     $howmany    Number of posts to retrieve from blog (default 10)
      * 
      * @return  array   Posts from blog
+     * 
+     * @throws \Comodojo\Exception\RpcException
+     * @throws \Comodojo\Exception\HttpException
+     * @throws \Comodojo\Exception\XmlrpcException
+     * @throws \Exception
      */
     public function getRecentPosts($howmany=10) {
 
@@ -254,13 +281,20 @@ class MetaWeblog {
      * Create new post using xmlrpc
      * 
      * Minimum $struct elements to compose new post are:
-     *  - title         STRING  the post title
-     *  - description   STRING  the post content
+     *  - title         string  the post title
+     *  - description   string  the post content
      * 
      * If one or both not defined, method will throw an "Invalid post struct" error.
      * 
-     * @param   ARRAY   $struct     A post stuct
-     * @return  INT                 Assigned post ID
+     * @param  array  $struct  A post stuct
+     * 
+     * @return int
+     * 
+     * @throws \Comodojo\Exception\MetaWeblogException
+     * @throws \Comodojo\Exception\RpcException
+     * @throws \Comodojo\Exception\HttpException
+     * @throws \Comodojo\Exception\XmlrpcException
+     * @throws \Exception
      */
     public function newPost($struct, $publish=true) {
 
@@ -318,12 +352,15 @@ class MetaWeblog {
     /**
      * Edit post using remote server xmlrpc interface, referenced by postId
      * 
-     * A post struct currently support a non-standard set of elements to better
-     * support modern interfaces such as wordpress one. Anyway, server should ignore
-     * elements not known.
+     * @param   array  $struct A post stuct
      * 
-     * @param   ARRAY   $struct     A post stuct
-     * @return  INT                 Assigned post ID
+     * @return  int            Assigned post ID
+     * 
+     * @throws \Comodojo\Exception\MetaWeblogException
+     * @throws \Comodojo\Exception\RpcException
+     * @throws \Comodojo\Exception\HttpException
+     * @throws \Comodojo\Exception\XmlrpcException
+     * @throws \Exception
      */
     public function editPost($postId, $struct, $publish = true) {
 
@@ -380,6 +417,21 @@ class MetaWeblog {
 
     }
 
+    /**
+     * Delete a post referenced by postId
+     * 
+     * @param   int  $postId
+     * @param   int  $appkey
+     * @param   int  $publish
+     * 
+     * @return  bool
+     * 
+     * @throws \Comodojo\Exception\MetaWeblogException
+     * @throws \Comodojo\Exception\RpcException
+     * @throws \Comodojo\Exception\HttpException
+     * @throws \Comodojo\Exception\XmlrpcException
+     * @throws \Exception
+     */
     public function deletePost($postId, $appkey = false, $publish = false) {
 
         if ( empty($postId) ) throw new MetaWeblogException('Invalid post id');
@@ -422,6 +474,11 @@ class MetaWeblog {
      * Retrieve a list of categories from weblog
      * 
      * @return  ARRAY   Categories
+     * 
+     * @throws \Comodojo\Exception\RpcException
+     * @throws \Comodojo\Exception\HttpException
+     * @throws \Comodojo\Exception\XmlrpcException
+     * @throws \Exception
      */
     public function getCategories() {
 
@@ -460,10 +517,18 @@ class MetaWeblog {
     /**
      * upload a new media to weblog using metaWeblog.newMediaObject call
      * 
-     * [...]
+     * @param   string $name
+     * @param   string $mimetype
+     * @param   mixed  $content
+     * @param   int    $overwrite
      * 
-     * @param   ARRAY   $struct     A post stuct
-     * @return  INT                 Assigned post ID
+     * @return  bool
+     * 
+     * @throws \Comodojo\Exception\MetaWeblogException
+     * @throws \Comodojo\Exception\RpcException
+     * @throws \Comodojo\Exception\HttpException
+     * @throws \Comodojo\Exception\XmlrpcException
+     * @throws \Exception
      */
     public function newMediaObject($name, $mimetype, $content, $overwrite=false) {
 
@@ -509,6 +574,20 @@ class MetaWeblog {
         
     }
 
+    /**
+     * get template
+     * 
+     * @param   string $template_type
+     * @param   string $appkey
+     * 
+     * @return  array
+     * 
+     * @throws \Comodojo\Exception\MetaWeblogException
+     * @throws \Comodojo\Exception\RpcException
+     * @throws \Comodojo\Exception\HttpException
+     * @throws \Comodojo\Exception\XmlrpcException
+     * @throws \Exception
+     */
     public function getTemplate($template_type, $appkey=false) {
 
         if ( empty($template_type) ) throw new MetaWeblogException('Invalid template type');
@@ -547,6 +626,21 @@ class MetaWeblog {
 
     }
 
+    /**
+     * get template
+     * 
+     * @param   string $template
+     * @param   string $template_type
+     * @param   string $appkey
+     * 
+     * @return  bool
+     * 
+     * @throws \Comodojo\Exception\MetaWeblogException
+     * @throws \Comodojo\Exception\RpcException
+     * @throws \Comodojo\Exception\HttpException
+     * @throws \Comodojo\Exception\XmlrpcException
+     * @throws \Exception
+     */
     public function setTemplate($template, $template_type, $appkey=false) {
 
         if ( empty($template_type) ) throw new MetaWeblogException('Invalid template type');
@@ -591,9 +685,14 @@ class MetaWeblog {
     /**
      * Returns information about all the blogs a given user is a member of
      * 
-     * @param   int     $howmany    Number of posts to retrieve from blog (default 10)
+     * @param   int   $appkey
      * 
-     * @return  array   Posts from blog
+     * @return  array Posts from blog
+     * 
+     * @throws \Comodojo\Exception\RpcException
+     * @throws \Comodojo\Exception\HttpException
+     * @throws \Comodojo\Exception\XmlrpcException
+     * @throws \Exception
      */
     public function getUsersBlogs($appkey=false) {
 
@@ -634,10 +733,21 @@ class MetaWeblog {
         try {
             
             $return = $this->rpc_client
-                ->port($this->port)
                 ->encode($this->encoding)
                 ->request($method, $params, false)
                 ->send();
+
+        } catch (HttpException $he) {
+
+            throw $he;
+
+        }  catch (RpcException $re) {
+
+            throw $re;
+
+        } catch (XmlrpcException $xe) {
+
+            throw $xe;
 
         } catch (Exception $e) {
             
