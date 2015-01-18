@@ -733,8 +733,8 @@ class MetaWeblog {
         try {
             
             $return = $this->rpc_client
-                ->encode($this->encoding)
-                ->request($method, $params, false)
+                ->setEncoding($this->encoding)
+                ->addRequest($method, $params, false)
                 ->send();
 
         } catch (HttpException $he) {
