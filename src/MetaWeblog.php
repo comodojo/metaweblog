@@ -44,14 +44,14 @@ class MetaWeblog {
      * 
      * @param   string
      */
-    private $user = null;
+    protected $user = null;
     
     /**
      * Password
      * 
      * @param   string
      */
-    private $pass = null;
+    protected $pass = null;
 
     /**
      * Weblog ID (leave it 0 if you're in single-blog mode)
@@ -65,7 +65,7 @@ class MetaWeblog {
      * 
      * @param   string
      */
-    private $encoding = "UTF-8";
+    protected $encoding = "UTF-8";
 
     private $rpc_client = false;
 
@@ -366,7 +366,7 @@ class MetaWeblog {
 
         if ( empty($postId) ) throw new MetaWeblogException('Invalid post id');
 
-        if ( is_array($struct) OR @array_key_exists('title', $struct) === false OR @array_key_exists('description', $struct) === false ) throw new MetaWeblogException('Invalid post struct');
+        if ( !is_array($struct) OR @array_key_exists('title', $struct) === false OR @array_key_exists('description', $struct) === false ) throw new MetaWeblogException('Invalid post struct');
 
         $real_post_struct = array(
             'title'             =>  self::sanitizeText($struct['title'], $this->encoding),
@@ -728,7 +728,7 @@ class MetaWeblog {
 
     }
 
-    private function sendRpcRequest($method, $params) {
+    protected function sendRpcRequest($method, $params) {
 
         try {
             
@@ -759,7 +759,7 @@ class MetaWeblog {
 
     }
 
-    static private function sanitizeText($mixed, $encoding) {
+    static protected function sanitizeText($mixed, $encoding) {
 
         if ( is_array($mixed) ) {
            
