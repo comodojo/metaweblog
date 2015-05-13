@@ -5,8 +5,6 @@ php:
   - 5.4
   - 5.5
   - 5.6
-  - 7
-  - hhvm
 
 before_script:
   - sudo apt-get update
@@ -19,6 +17,7 @@ before_script:
   # configure apache virtual hosts
   - sudo cp -f build/travis-ci-apache /etc/apache2/sites-available/default
   - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/default
+  - echo 'date.timezone = "Europe/Rome"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - sudo service apache2 restart
   - mysql -e 'CREATE DATABASE wordpress_test;' -uroot
   - composer install --prefer-source

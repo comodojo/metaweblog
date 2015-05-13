@@ -1,5 +1,7 @@
 ## comodojo/metaweblog
 
+[![Build Status](https://api.travis-ci.org/comodojo/metaweblog.png)](http://travis-ci.org/comodojo/metaweblog) [![Latest Stable Version](https://poser.pugx.org/comodojo/metaweblog/v/stable)](https://packagist.org/packages/comodojo/metaweblog) [![Total Downloads](https://poser.pugx.org/comodojo/metaweblog/downloads)](https://packagist.org/packages/comodojo/metaweblog) [![Latest Unstable Version](https://poser.pugx.org/comodojo/metaweblog/v/unstable)](https://packagist.org/packages/comodojo/metaweblog) [![License](https://poser.pugx.org/comodojo/metaweblog/license)](https://packagist.org/packages/comodojo/metaweblog)
+
 A [metaweblog](http://xmlrpc.scripting.com/metaWeblogApi.html) rpc client. It uses the [comodojo/rpcclient](https://github.com/comodojo/rpcclient) to send requests.
 
 This lib is intended to be used as basic client for many blog platforms (such as wordpress) or to generate testing cases for rpc server.
