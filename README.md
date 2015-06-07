@@ -107,3 +107,15 @@ try {
         $mwlog->setEncoding('utf-8');
         
     ```
+
+## Documentation
+
+- [API](https://api.comodojo.org/libs/Comodojo/MetaWeblog.html)
+
+## Contributing
+
+Contributions are welcome and will be fully credited. Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+
+## License
+
+`` comodojo/metaweblog `` is released under the MIT License (MIT). Please see [License File](LICENSE) for more information.
