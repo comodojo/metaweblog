@@ -1,4 +1,4 @@
-## comodojo/metaweblog
+# comodojo/metaweblog
 
 [![Build Status](https://api.travis-ci.org/comodojo/metaweblog.png)](http://travis-ci.org/comodojo/metaweblog) [![Latest Stable Version](https://poser.pugx.org/comodojo/metaweblog/v/stable)](https://packagist.org/packages/comodojo/metaweblog) [![Total Downloads](https://poser.pugx.org/comodojo/metaweblog/downloads)](https://packagist.org/packages/comodojo/metaweblog) [![Latest Unstable Version](https://poser.pugx.org/comodojo/metaweblog/v/unstable)](https://packagist.org/packages/comodojo/metaweblog) [![License](https://poser.pugx.org/comodojo/metaweblog/license)](https://packagist.org/packages/comodojo/metaweblog)
 
