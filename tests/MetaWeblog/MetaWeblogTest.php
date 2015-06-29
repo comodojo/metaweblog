@@ -102,6 +102,31 @@ class MetaWeblogTest extends \PHPUnit_Framework_TestCase {
 
     }
 
+    public function testNewMediaObject() {
+
+        $file = __DIR__."/../resources/keepcalm.png";
+
+        $content = file_get_contents($file);
+
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+
+        $mime = finfo_file($finfo, $file);
+
+        finfo_close($finfo);
+
+        $name = "keepcalm-" . time() . ".png";
+
+        $upload = $this->mwlog->newMediaObject($name, $mime, $content);
+
+        $this->assertInternalType('array', $upload);
+
+        $this->assertGreaterThan(0, intval($upload['id']));
+
+        $this->assertSame($name, $upload['file']);
+
+        $this->assertSame($mime, $upload['type']);
+
+    }
     
 
 }
