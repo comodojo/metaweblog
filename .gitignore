@@ -2,7 +2,7 @@ composer.phar
 composer.lock
 coverage.clover
 vendor/
-build/
+build/*
 !build/travis-ci-apache
 
 # Commit your application's lock file http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file
