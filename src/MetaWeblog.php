@@ -62,7 +62,12 @@ class MetaWeblog {
      */
     protected $encoding = "UTF-8";
 
-    private $rpc_client = false;
+    /**
+     * RpcClient handler
+     * 
+     * @param   \Comodojo\RpcClient\RpcClient
+     */
+    private $rpc_client = null;
 
     /**
      * Class constructor
@@ -293,15 +298,15 @@ class MetaWeblog {
      */
     public function newPost($struct, $publish=true) {
 
-        if ( !is_array($struct) OR @array_key_exists('title', $struct) === false OR @array_key_exists('description', $struct) === false ) throw new MetaWeblogException('Invalid post struct');
+        if ( !is_array($struct) || @array_key_exists('title', $struct) === false || @array_key_exists('description', $struct) === false ) throw new MetaWeblogException('Invalid post struct');
 
         $real_post_struct = array(
             'title'             =>  self::sanitizeText($struct['title'], $this->encoding),
             'description'       =>  self::sanitizeText($struct['description'], $this->encoding),
             'post_type'         =>  isset($struct['post_type']) ? $struct['post_type'] : "post",
             'mt_text_more'      =>  isset($struct['mt_text_more']) ? self::sanitizeText($struct['mt_text_more'], $this->encoding) : false,
-            'categories'        =>  ( isset($struct['categories']) AND is_array($struct['categories']) ) ? self::sanitizeText($struct['categories'], $this->encoding) : array(),
-            'mt_keywords'       =>  ( isset($struct['mt_keywords']) AND is_array($struct['mt_keywords']) ) ? self::sanitizeText($struct['mt_keywords'], $this->encoding) : array(),
+            'categories'        =>  ( isset($struct['categories']) && is_array($struct['categories']) ) ? self::sanitizeText($struct['categories'], $this->encoding) : array(),
+            'mt_keywords'       =>  ( isset($struct['mt_keywords']) && is_array($struct['mt_keywords']) ) ? self::sanitizeText($struct['mt_keywords'], $this->encoding) : array(),
             'mt_excerpt'        =>  isset($struct['mt_excerpt']) ? self::sanitizeText($struct['mt_excerpt'], $this->encoding) : false,
             'mt_text_more'      =>  isset($struct['mt_text_more']) ? self::sanitizeText($struct['mt_text_more'], $this->encoding) : false,
             'mt_allow_comments' =>  isset($struct['mt_allow_comments']) ? $struct['mt_allow_comments'] : "open",
@@ -361,15 +366,15 @@ class MetaWeblog {
 
         if ( empty($postId) ) throw new MetaWeblogException('Invalid post id');
 
-        if ( !is_array($struct) OR @array_key_exists('title', $struct) === false OR @array_key_exists('description', $struct) === false ) throw new MetaWeblogException('Invalid post struct');
+        if ( !is_array($struct) || @array_key_exists('title', $struct) === false || @array_key_exists('description', $struct) === false ) throw new MetaWeblogException('Invalid post struct');
 
         $real_post_struct = array(
             'title'             =>  self::sanitizeText($struct['title'], $this->encoding),
             'description'       =>  self::sanitizeText($struct['description'], $this->encoding),
             'post_type'         =>  isset($struct['post_type']) ? $struct['post_type'] : "post",
             'mt_text_more'      =>  isset($struct['mt_text_more']) ? self::sanitizeText($struct['mt_text_more'], $this->encoding) : false,
-            'categories'        =>  ( isset($struct['categories']) AND is_array($struct['categories']) ) ? self::sanitizeText($struct['categories'], $this->encoding) : array(),
-            'mt_keywords'       =>  ( isset($struct['mt_keywords']) AND is_array($struct['mt_keywords']) ) ? self::sanitizeText($struct['mt_keywords'], $this->encoding) : array(),
+            'categories'        =>  ( isset($struct['categories']) && is_array($struct['categories']) ) ? self::sanitizeText($struct['categories'], $this->encoding) : array(),
+            'mt_keywords'       =>  ( isset($struct['mt_keywords']) && is_array($struct['mt_keywords']) ) ? self::sanitizeText($struct['mt_keywords'], $this->encoding) : array(),
             'mt_excerpt'        =>  isset($struct['mt_excerpt']) ? self::sanitizeText($struct['mt_excerpt'], $this->encoding) : false,
             'mt_text_more'      =>  isset($struct['mt_text_more']) ? self::sanitizeText($struct['mt_text_more'], $this->encoding) : false,
             'mt_allow_comments' =>  isset($struct['mt_allow_comments']) ? $struct['mt_allow_comments'] : "open",
@@ -527,7 +532,7 @@ class MetaWeblog {
      */
     public function newMediaObject($name, $mimetype, $content, $overwrite=false) {
 
-        if ( empty($name) OR empty($mimetype) OR empty($content) ) throw new MetaWeblogException('Invalid media object');
+        if ( empty($name) || empty($mimetype) || empty($content) ) throw new MetaWeblogException('Invalid media object');
 
         $params = array(
             $this->id,
@@ -723,6 +728,19 @@ class MetaWeblog {
 
     }
 
+    /**
+     * Send the request via RpcClient
+     * 
+     * @param   string   $method
+     * @param   array    $params
+     * 
+     * @return  mixed
+     * 
+     * @throws \Comodojo\Exception\RpcException
+     * @throws \Comodojo\Exception\HttpException
+     * @throws \Comodojo\Exception\XmlrpcException
+     * @throws \Exception
+     */
     protected function sendRpcRequest($method, $params) {
 
         try {
@@ -754,7 +772,15 @@ class MetaWeblog {
 
     }
 
-    static protected function sanitizeText($mixed, $encoding) {
+    /**
+     * Re-encode text
+     * 
+     * @param   mixed    $mixed
+     * @param   string   $encoding
+     * 
+     * @return  mixed
+     */
+    protected static function sanitizeText($mixed, $encoding) {
 
         if ( is_array($mixed) ) {
            

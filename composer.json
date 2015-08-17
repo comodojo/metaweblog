@@ -9,7 +9,7 @@
         "blog",
         "comodojo"
     ],
-    "homepage": "http://comodojo.org",
+    "homepage": "https://comodojo.org",
      "support": {
         "issues": "https://github.com/comodojo/metaweblog/issues"
     },
@@ -22,13 +22,13 @@
     ],
     "autoload": {
         "psr-4": {
-            "Comodojo\\Exception\\": "src/Exception",
             "Comodojo\\MetaWeblog\\": "src"
         }
     },
     "require": {
         "php": ">=5.3.0",
-        "comodojo/rpcclient": "1.1.*"
+        "comodojo/rpcclient": "1.1.*",
+        "comodojo/exceptions": "@stable"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.0",
