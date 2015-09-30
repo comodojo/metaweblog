@@ -111,7 +111,7 @@ class MetaWeblog {
      *
      * @param   int     $id    Blog ID
      * 
-     * @return  Object  $this
+     * @return  \Comodojo\MetaWeblog\MetaWeblog
      */
     final public function setId($id) {
 
@@ -131,7 +131,7 @@ class MetaWeblog {
      *
      * @param   string  $encoding
      * 
-     * @return  Object  $this
+     * @return  \Comodojo\MetaWeblog\MetaWeblog
      */
     final public function setEncoding($encoding) {
 
@@ -473,7 +473,7 @@ class MetaWeblog {
     /**
      * Retrieve a list of categories from weblog
      * 
-     * @return  ARRAY   Categories
+     * @return  array   Categories
      * 
      * @throws \Comodojo\Exception\RpcException
      * @throws \Comodojo\Exception\HttpException

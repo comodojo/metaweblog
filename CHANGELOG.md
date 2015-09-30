@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 1.0.4
+
+###Other
+- added comodojo/exceptions as a dependency
+
 ## Version 1.0.3
 
 ### Fixed

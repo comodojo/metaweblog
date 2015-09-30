@@ -16,6 +16,26 @@ class MetaWeblogTest extends \PHPUnit_Framework_TestCase {
     
     }
 
+    public function testProperties() {
+
+        $mwlog = $this->mwlog->setId(2)->setEncoding('iso-8859-1');
+    
+        $this->assertInstanceOf('\Comodojo\MetaWeblog\MetaWeblog', $mwlog);
+    
+        $id = $this->mwlog->getId();
+    
+        $this->assertEquals(2,$id);
+    
+        $encoding = $this->mwlog->getEncoding();
+    
+        $this->assertEquals('iso-8859-1',$encoding);
+    
+        $client = $this->mwlog->getRpcClient();
+    
+        $this->assertInstanceOf('\Comodojo\RpcClient\RpcClient', $client);
+    
+    }
+
     public function testGetRecentPosts() {
         
         $posts = $this->mwlog->getRecentPosts(2);
