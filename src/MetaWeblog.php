@@ -80,7 +80,7 @@ class MetaWeblog {
      * @throws \Comodojo\Exception\HttpException;
      * @throws \Exception;
      */
-    public function __construct($address, $user=false, $pass=false) {
+    public function __construct($address, $user = false, $pass = false) {
         
         if ( empty($address) ) throw new MetaWeblogException("Invalid remote xmlrpc server");
 
@@ -235,7 +235,7 @@ class MetaWeblog {
      * @throws \Comodojo\Exception\XmlrpcException
      * @throws \Exception
      */
-    public function getRecentPosts($howmany=10) {
+    public function getRecentPosts($howmany = 10) {
 
         $howmany = filter_var($howmany, FILTER_VALIDATE_INT, array(
             "options" => array(
@@ -296,7 +296,7 @@ class MetaWeblog {
      * @throws \Comodojo\Exception\XmlrpcException
      * @throws \Exception
      */
-    public function newPost($struct, $publish=true) {
+    public function newPost($struct, $publish = true) {
 
         if ( !is_array($struct) || @array_key_exists('title', $struct) === false || @array_key_exists('description', $struct) === false ) throw new MetaWeblogException('Invalid post struct');
 
@@ -305,8 +305,8 @@ class MetaWeblog {
             'description'       =>  self::sanitizeText($struct['description'], $this->encoding),
             'post_type'         =>  isset($struct['post_type']) ? $struct['post_type'] : "post",
             'mt_text_more'      =>  isset($struct['mt_text_more']) ? self::sanitizeText($struct['mt_text_more'], $this->encoding) : false,
-            'categories'        =>  ( isset($struct['categories']) && is_array($struct['categories']) ) ? self::sanitizeText($struct['categories'], $this->encoding) : array(),
-            'mt_keywords'       =>  ( isset($struct['mt_keywords']) && is_array($struct['mt_keywords']) ) ? self::sanitizeText($struct['mt_keywords'], $this->encoding) : array(),
+            'categories'        =>  (isset($struct['categories']) && is_array($struct['categories'])) ? self::sanitizeText($struct['categories'], $this->encoding) : array(),
+            'mt_keywords'       =>  (isset($struct['mt_keywords']) && is_array($struct['mt_keywords'])) ? self::sanitizeText($struct['mt_keywords'], $this->encoding) : array(),
             'mt_excerpt'        =>  isset($struct['mt_excerpt']) ? self::sanitizeText($struct['mt_excerpt'], $this->encoding) : false,
             'mt_text_more'      =>  isset($struct['mt_text_more']) ? self::sanitizeText($struct['mt_text_more'], $this->encoding) : false,
             'mt_allow_comments' =>  isset($struct['mt_allow_comments']) ? $struct['mt_allow_comments'] : "open",
@@ -373,8 +373,8 @@ class MetaWeblog {
             'description'       =>  self::sanitizeText($struct['description'], $this->encoding),
             'post_type'         =>  isset($struct['post_type']) ? $struct['post_type'] : "post",
             'mt_text_more'      =>  isset($struct['mt_text_more']) ? self::sanitizeText($struct['mt_text_more'], $this->encoding) : false,
-            'categories'        =>  ( isset($struct['categories']) && is_array($struct['categories']) ) ? self::sanitizeText($struct['categories'], $this->encoding) : array(),
-            'mt_keywords'       =>  ( isset($struct['mt_keywords']) && is_array($struct['mt_keywords']) ) ? self::sanitizeText($struct['mt_keywords'], $this->encoding) : array(),
+            'categories'        =>  (isset($struct['categories']) && is_array($struct['categories'])) ? self::sanitizeText($struct['categories'], $this->encoding) : array(),
+            'mt_keywords'       =>  (isset($struct['mt_keywords']) && is_array($struct['mt_keywords'])) ? self::sanitizeText($struct['mt_keywords'], $this->encoding) : array(),
             'mt_excerpt'        =>  isset($struct['mt_excerpt']) ? self::sanitizeText($struct['mt_excerpt'], $this->encoding) : false,
             'mt_text_more'      =>  isset($struct['mt_text_more']) ? self::sanitizeText($struct['mt_text_more'], $this->encoding) : false,
             'mt_allow_comments' =>  isset($struct['mt_allow_comments']) ? $struct['mt_allow_comments'] : "open",
@@ -530,7 +530,7 @@ class MetaWeblog {
      * @throws \Comodojo\Exception\XmlrpcException
      * @throws \Exception
      */
-    public function newMediaObject($name, $mimetype, $content, $overwrite=false) {
+    public function newMediaObject($name, $mimetype, $content, $overwrite = false) {
 
         if ( empty($name) || empty($mimetype) || empty($content) ) throw new MetaWeblogException('Invalid media object');
 
@@ -588,7 +588,7 @@ class MetaWeblog {
      * @throws \Comodojo\Exception\XmlrpcException
      * @throws \Exception
      */
-    public function getTemplate($template_type, $appkey=false) {
+    public function getTemplate($template_type, $appkey = false) {
 
         if ( empty($template_type) ) throw new MetaWeblogException('Invalid template type');
 
@@ -641,7 +641,7 @@ class MetaWeblog {
      * @throws \Comodojo\Exception\XmlrpcException
      * @throws \Exception
      */
-    public function setTemplate($template, $template_type, $appkey=false) {
+    public function setTemplate($template, $template_type, $appkey = false) {
 
         if ( empty($template_type) ) throw new MetaWeblogException('Invalid template type');
 
@@ -694,7 +694,7 @@ class MetaWeblog {
      * @throws \Comodojo\Exception\XmlrpcException
      * @throws \Exception
      */
-    public function getUsersBlogs($appkey=false) {
+    public function getUsersBlogs($appkey = false) {
 
         $params = array(
             $appkey,
@@ -754,7 +754,7 @@ class MetaWeblog {
 
             throw $he;
 
-        }  catch (RpcException $re) {
+        } catch (RpcException $re) {
 
             throw $re;
 
@@ -784,11 +784,11 @@ class MetaWeblog {
 
         if ( is_array($mixed) ) {
            
-           foreach ( $mixed as $id => $val ) $mixed[$id] = self::sanitizeText($val, $encoding);
+            foreach ( $mixed as $id => $val ) $mixed[$id] = self::sanitizeText($val, $encoding);
            
         } else {
 
-           $mixed = htmlentities( iconv( mb_detect_encoding($mixed, mb_detect_order(), false), $encoding, $mixed) );
+            $mixed = htmlentities( iconv( mb_detect_encoding($mixed, mb_detect_order(), false), $encoding, $mixed) );
 
         }
 
