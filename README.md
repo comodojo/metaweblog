@@ -2,7 +2,9 @@
 
 [![Build Status](https://api.travis-ci.org/comodojo/metaweblog.png)](http://travis-ci.org/comodojo/metaweblog) [![Latest Stable Version](https://poser.pugx.org/comodojo/metaweblog/v/stable)](https://packagist.org/packages/comodojo/metaweblog) [![Total Downloads](https://poser.pugx.org/comodojo/metaweblog/downloads)](https://packagist.org/packages/comodojo/metaweblog) [![Latest Unstable Version](https://poser.pugx.org/comodojo/metaweblog/v/unstable)](https://packagist.org/packages/comodojo/metaweblog) [![License](https://poser.pugx.org/comodojo/metaweblog/license)](https://packagist.org/packages/comodojo/metaweblog) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/comodojo/metaweblog/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/comodojo/metaweblog/?branch=master) [![Code Coverage](https://scrutinizer-ci.com/g/comodojo/metaweblog/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/comodojo/metaweblog/?branch=master)
 
-A [metaweblog](http://xmlrpc.scripting.com/metaWeblogApi.html) rpc client. It uses the [comodojo/rpcclient](https://github.com/comodojo/rpcclient) to send requests.
+A [metaweblog](http://xmlrpc.scripting.com/metaWeblogApi.html) rpc client.
+
+***This is the development branch, please do not use it in production***
 
 This lib is intended to be used as basic client for many blog platforms (such as wordpress) or to generate testing cases for rpc server.
 
@@ -10,7 +12,7 @@ This lib is intended to be used as basic client for many blog platforms (such as
 
 Install [composer](https://getcomposer.org/), then:
 
-`` composer require comodojo/metaweblog 1.0.* ``
+`` composer require comodojo/metaweblog ``
 
 ## Usage example
 
@@ -21,12 +23,12 @@ try {
 
     // Create a new metaweblog instance providing address, username and password
     $mwlog = new \Comodojo\MetaWeblog\MetaWeblog( "www.example.org", "john", "doe" );
-    
+
     // Get last 10 posts
     $posts = $mwlog->getRecentPosts(10);
 
 } catch (\Exception $e) {
-	
+
 	/* something did not work :( */
 
 }
@@ -40,7 +42,7 @@ This library supports the whole metaweblog API:
 - `getPost($id)`: retrieve a post from weblog
 
 - `getRecentPosts(/*optional, default 10*/ $howmany)`: get `$howmany` posts from blog
- 
+
 - `newPost($struct, /*optional, default true*/ $publish)`: create new post
 
 - `editPost($postId, $struct, /*optional, default true*/ $publish)`: edit post referenced by `postId`
@@ -70,14 +72,14 @@ try {
 
     // Create a new metaweblog instance providing address, username and password
     $mwlog = new \Comodojo\MetaWeblog\MetaWeblog( "www.example.org", "john", "doe" );
-    
+
     $mwlog->getRpcClient()->getTransport()->setPort(8080);
-    
+
     // Get last 10 posts
     $posts = $mwlog->getRecentPosts(10);
 
 } catch (\Exception $e) {
-	
+
 	/* something did not work :( */
 
 }
@@ -91,26 +93,26 @@ try {
     ```php
         // Get current blog ID
         $id = $mwlog->getId()
-        
+
         // Set current blog ID
         $mwlog->setId(2);
-        
+
     ```
 
-- Get/set encoding 
+- Get/set encoding
 
     ```php
         // Get current encoding
         $enc = $mwlog->getEncoding()
-        
+
         // Set current encoding
         $mwlog->setEncoding('utf-8');
-        
+
     ```
 
 ## Documentation
 
-- [API](https://api.comodojo.org/libs/Comodojo/MetaWeblog.html)
+- [API](https://api.comodojo.org/libs/metaweblog)
 
 ## Contributing
 
