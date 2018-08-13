@@ -166,7 +166,9 @@ class MetaWeblog {
 
         try {
 
-            $response = $this->sendRpcRequest('metaWeblog.getPost', $params);
+            return $this->sendRpcRequest(
+                RpcRequest::create('metaWeblog.getPost', $params)
+            );
 
         } catch (HttpException $he) {
 
@@ -185,8 +187,6 @@ class MetaWeblog {
             throw $e;
 
         }
-
-        return $response;
 
     }
 
