@@ -6,38 +6,37 @@ class MetaWeblogTest extends \PHPUnit_Framework_TestCase {
 
     protected function setUp() {
 
-        $address = "http://localhost/xmlrpc.php";
-
+        $address = "http://wp.localhost/xmlrpc.php";
+        // $address = "http://localhost/wordpress/xmlrpc.php";
         $user = "admin";
-
         $pass = "admin";
-        
+
         $this->mwlog = new \Comodojo\MetaWeblog\MetaWeblog($address, $user, $pass);
-    
+
     }
 
     public function testProperties() {
 
         $mwlog = $this->mwlog->setId(2)->setEncoding('iso-8859-1');
-    
+
         $this->assertInstanceOf('\Comodojo\MetaWeblog\MetaWeblog', $mwlog);
-    
+
         $id = $this->mwlog->getId();
-    
+
         $this->assertEquals(2,$id);
-    
+
         $encoding = $this->mwlog->getEncoding();
-    
+
         $this->assertEquals('iso-8859-1',$encoding);
-    
+
         $client = $this->mwlog->getRpcClient();
-    
+
         $this->assertInstanceOf('\Comodojo\RpcClient\RpcClient', $client);
-    
+
     }
 
     public function testGetRecentPosts() {
-        
+
         $posts = $this->mwlog->getRecentPosts(2);
 
         $this->assertInternalType('array', $posts);
@@ -47,7 +46,7 @@ class MetaWeblogTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testGetPost() {
-        
+
         $post = $this->mwlog->getPost(1);
 
         $this->assertInternalType('array', $post);
@@ -67,7 +66,7 @@ class MetaWeblogTest extends \PHPUnit_Framework_TestCase {
             'mt_allow_comments' =>  "open",
             'mt_allow_pings'    =>  "open"
         );
-        
+
         $post = $this->mwlog->newPost($struct);
 
         $this->assertInternalType('int', intval($post));
@@ -87,7 +86,7 @@ class MetaWeblogTest extends \PHPUnit_Framework_TestCase {
             'mt_allow_comments' =>  "open",
             'mt_allow_pings'    =>  "open"
         );
-        
+
         $post = $this->mwlog->editPost(1, $struct);
 
         $this->assertTrue($post);
@@ -147,6 +146,6 @@ class MetaWeblogTest extends \PHPUnit_Framework_TestCase {
         $this->assertSame($mime, $upload['type']);
 
     }
-    
+
 
 }

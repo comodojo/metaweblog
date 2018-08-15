@@ -1,3 +1,5 @@
+sudo: required
+
 language: php
 
 php:
@@ -6,26 +8,66 @@ php:
   - 7.1
   - 7.2
 
+matrix:
+  fast_finish: true
+
+services:
+  - mysql
+
+cache:
+  apt: true
+  directories:
+    - vendor
+    - $HOME/.composer/cache/files
+
+addons:
+  apt:
+    packages:
+      - libjpeg-dev
+      - libpng12-dev
+      - php5-fpm
+      - php5-mysql
+      - nginx
+  hosts:
+    - wp.localhost
+
+env:
+  global:
+    - WP_FOLDER="/tmp/wordpress"
+    - WP_URL="http://wp.localhost"
+    - WP_DOMAIN="wp.localhost"
+    - DB_NAME="test"
+    - WP_TABLE_PREFIX="wp_"
+    - WP_ADMIN_USERNAME="admin"
+    - WP_ADMIN_PASSWORD="admin"
+    - WP_VERSION=latest
+
+before_install:
+  - mysql -e "create database IF NOT EXISTS $DB_NAME;" -uroot
+  - mkdir -p $WP_FOLDER
+  - mkdir tools
+  - wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -P $(pwd)/tools/
+  - chmod +x tools/wp-cli.phar && mv tools/wp-cli.phar tools/wp
+  - export PATH=$PATH:$(pwd)/tools
+  - export PATH=vendor/bin:$PATH
+
+install:
+  - composer install --prefer-dist
+  - cd $WP_FOLDER
+  - wp core download --version=$WP_VERSION
+  - wp config create --dbname="$DB_NAME" --dbuser="root" --dbpass="" --dbhost="127.0.0.1" --dbprefix="$WP_TABLE_PREFIX"
+  - wp core install --url="$WP_URL" --base="/" --title="Test" --admin_user="$WP_ADMIN_USERNAME" --admin_password="$WP_ADMIN_PASSWORD" --admin_email="admin@$WP_DOMAIN" --skip-email
+  - cd $TRAVIS_BUILD_DIR
+  - sudo cp build/travis-nginx-conf /etc/nginx/sites-available/$WP_DOMAIN
+  - sudo sed -e "s?%WP_FOLDER%?$WP_FOLDER?g" --in-place /etc/nginx/sites-available/$WP_DOMAIN
+  - sudo sed -e "s?%WP_DOMAIN%?$WP_DOMAIN?g" --in-place /etc/nginx/sites-available/$WP_DOMAIN
+  - sudo ln -s /etc/nginx/sites-available/$WP_DOMAIN /etc/nginx/sites-enabled/
+
 before_script:
-  - sudo apt-get update
-  - sudo apt-get install apache2 libapache2-mod-fastcgi
-  # enable php-fpm
-  - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
-  - sudo a2enmod rewrite actions fastcgi alias
-  - echo "cgi.fix_pathinfo = 1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-  - ~/.phpenv/versions/$(phpenv version-name)/sbin/php-fpm
-  # configure apache virtual hosts
-  - sudo cp -f build/travis-ci-apache /etc/apache2/sites-available/default
-  - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/default
-  - echo 'date.timezone = "Europe/Rome"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
-  - sudo service apache2 restart
-  - mysql -e 'CREATE DATABASE wordpress_test;' -uroot
-  - composer install --prefer-source
-  - vendor/bin/wp core download
-  - vendor/bin/wp core config --dbname=wordpress_test --dbuser=root
-  - vendor/bin/wp core install --url=http://localhost/metaweblog/ --title=Test --admin_user=admin --admin_password=admin --admin_email=info@comodojo.org
+  - sudo service php5-fpm restart
+  - sudo service nginx restart
 
 script: ./vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover
 
 after_script:
-  - bash -c 'if [[ "$TRAVIS_PHP_VERSION" != "hhvm" ]]; then php vendor/bin/ocular code-coverage:upload --format=php-clover coverage.clover; fi;'
+  - php vendor/bin/ocular code-coverage:upload --format=php-clover coverage.clover
